@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TastyNest — Discover Modern Gourmet Recipes & Smart Meal Planning</title>
+  <meta name="description" content="A clean, modern culinary studio with chef-crafted recipes, dynamic serving scaling, interactive cooking timers, video masterclasses, weekly meal planning, and smart grocery lists." />
+  <meta name="theme-color" content="#FAFAF7" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <!-- Immediate Theme Check to Prevent Flash of Unstyled Content -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('tastynest_theme');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Instrument Serif & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#FAFAF7',
+            surface: '#FFFFFF',
+            subtle: '#F4F4EE',
+            ink: {
+              950: '#0B0E0D',
+              900: '#141715',
+              800: '#232824',
+              700: '#38403A',
+              600: '#525C54',
+              500: '#717D74',
+              400: '#94A097',
+              300: '#BDC7C0',
+              200: '#E1E6E2',
+              100: '#F0F3F1',
+              50: '#F7F9F8'
+            },
+            emerald: {
+              50: '#F0FDF4',
+              100: '#DCFCE7',
+              400: '#34D399',
+              500: '#10B981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065F46',
+              900: '#0F5132'
+            },
+            citrus: {
+              50: '#FFF7ED',
+              100: '#FFEDD5',
+              200: '#FED7AA',
+              400: '#FB923C',
+              500: '#F97316',
+              600: '#EA580C',
+              700: '#C2410C'
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            editorial: ['"Instrument Serif"', '"Playfair Display"', 'Georgia', 'serif'],
+            display: ['"Outfit"', 'sans-serif']
+          },
+          boxShadow: {
+            'clean-sm': '0 1px 3px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02)',
+            'clean-md': '0 4px 16px -2px rgba(0,0,0,0.05), 0 2px 6px -1px rgba(0,0,0,0.02)',
+            'clean-lg': '0 12px 32px -4px rgba(20,23,21,0.07), 0 4px 12px -2px rgba(0,0,0,0.03)',
+            'clean-xl': '0 20px 48px -8px rgba(20,23,21,0.12)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons & Confetti -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Firebase SDKs (v10 Compat) & Service -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-service.js"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-[#FAFAF7] dark:bg-[#0B0E0D] text-ink-900 dark:text-zinc-100 min-h-screen flex flex-col antialiased selection:bg-emerald-100 dark:selection:bg-emerald-900/60 selection:text-emerald-900 dark:selection:text-emerald-200 pb-16 lg:pb-0">
+
+  <!-- MODERN MINIMALIST FLOATING NAVBAR -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-[#121614]/90 backdrop-blur-xl border-b border-stone-200/80 dark:border-white/10 transition-colors duration-300 shadow-2xs">
+    <!-- Radiant Top Accent Line -->
+    <div class="h-[2.5px] w-full bg-gradient-to-r from-emerald-500 via-citrus-500 to-rose-500"></div>
+
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
+      
+      <!-- Brand Logo -->
+      <a href="#home" onclick="TastyApp.navigateTo('home'); return false;" class="flex items-center gap-2 group shrink-0">
+        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-ink-900 dark:bg-emerald-600 text-white flex items-center justify-center font-bold shadow-clean-sm group-hover:scale-105 group-hover:bg-emerald-700 transition-all">
+          <i data-lucide="utensils-crossed" class="w-4 h-4 text-emerald-300 dark:text-white"></i>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span class="font-editorial text-2xl sm:text-3xl font-semibold tracking-tight text-ink-900 dark:text-white">TastyNest</span>
+          <span class="w-1.5 h-1.5 rounded-full bg-citrus-500 animate-pulse"></span>
+        </div>
+      </a>
+
+      <!-- Clean Desktop Navigation Links -->
+      <nav class="hidden lg:flex items-center gap-1 xl:gap-1.5 text-xs font-semibold text-ink-600 dark:text-zinc-300">
+        <button id="nav-btn-home" onclick="TastyApp.navigateTo('home')" class="px-3 py-1.5 rounded-full hover:text-ink-900 dark:hover:text-white hover:bg-stone-100/80 dark:hover:bg-white/10 transition-all flex items-center gap-1.5 shrink-0">
+          <i data-lucide="home" class="w-3.5 h-3.5"></i>
+          <span>Home</span>
+        </button>
+        <button id="nav-btn-explore" onclick="TastyApp.navigateTo('explore')" class="px-3 py-1.5 rounded-full hover:text-ink-900 dark:hover:text-white hover:bg-stone-100/80 dark:hover:bg-white/10 transition-all flex items-center gap-1.5 shrink-0">
+          <i data-lucide="compass" class="w-3.5 h-3.5"></i>
+          <span>Explore</span>
+        </button>
+        <button id="nav-btn-videos" onclick="TastyApp.navigateTo('videos')" class="px-3 py-1.5 rounded-full hover:text-ink-900 dark:hover:text-white hover:bg-stone-100/80 dark:hover:bg-white/10 transition-all flex items-center gap-1.5 shrink-0">
+          <i data-lucide="play-circle" class="w-3.5 h-3.5 text-rose-500"></i>
+          <span>Videos</span>
+          <span class="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[9px] font-extrabold uppercase tracking-wide shadow-2xs video-pulse-dot">Live</span>
+        </button>
+        <button id="nav-btn-categories" onclick="TastyApp.navigateTo('categories')" class="px-3 py-1.5 rounded-full hover:text-ink-900 dark:hover:text-white hover:bg-stone-100/80 dark:hover:bg-white/10 transition-all flex items-center gap-1.5 shrink-0">
+          <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+          <span>Categories</span>
+        </button>
+        <button id="nav-btn-planner" onclick="TastyApp.navigateTo('planner')" class="px-3 py-1.5 rounded-full hover:text-ink-900 dark:hover:text-white hover:bg-stone-100/80 dark:hover:bg-white/10 transition-all flex items-center gap-1.5 shrink-0">
+          <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+          <span>Planner</span>
+        </button>
+        <button id="nav-btn-favorites" onclick="TastyApp.navigateTo('favorites')" class="px-3 py-1.5 rounded-full hover:text-ink-900 dark:hover:text-white hover:bg-stone-100/80 dark:hover:bg-white/10 transition-all flex items-center gap-1.5 shrink-0">
+          <i data-lucide="bookmark" class="w-3.5 h-3.5 text-citrus-500"></i>
+          <span>Favorites</span>
+          <span id="favorites-count-badge" class="px-1.5 py-0.2 rounded-full bg-stone-100 dark:bg-white/10 text-[10px] font-bold text-ink-700 dark:text-zinc-200">0</span>
+        </button>
+        <button id="nav-btn-shopping" onclick="TastyApp.navigateTo('shopping')" class="px-3 py-1.5 rounded-full hover:text-ink-900 dark:hover:text-white hover:bg-stone-100/80 dark:hover:bg-white/10 transition-all flex items-center gap-1.5 shrink-0">
+          <i data-lucide="shopping-bag" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+          <span>Groceries</span>
+          <span id="shopping-count-badge" class="px-1.5 py-0.2 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">0</span>
+        </button>
+      </nav>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        
+        <!-- Quick Search Pill -->
+        <button onclick="TastyApp.openSearchModal()" title="Search recipes (Ctrl+K)" class="hidden md:flex items-center gap-2 pl-3 pr-2 py-1.5 rounded-full bg-stone-100/80 dark:bg-white/5 hover:bg-stone-200/70 dark:hover:bg-white/10 border border-stone-200/60 dark:border-white/10 text-xs text-ink-500 dark:text-zinc-400 hover:text-ink-900 dark:hover:text-white transition-all shrink-0">
+          <i data-lucide="search" class="w-3.5 h-3.5 text-ink-400 dark:text-zinc-400"></i>
+          <span class="hidden xl:inline text-xs">Search...</span>
+          <kbd class="px-1.5 py-0.5 text-[9px] font-mono bg-white dark:bg-stone-800 rounded-md text-ink-400 dark:text-zinc-400 border border-stone-200 dark:border-stone-700 shadow-2xs">⌘K</kbd>
+        </button>
+
+        <!-- Search button for mobile -->
+        <button onclick="TastyApp.openSearchModal()" class="md:hidden p-2 rounded-full hover:bg-stone-100 dark:hover:bg-white/10 text-ink-600 dark:text-zinc-300" title="Search">
+          <i data-lucide="search" class="w-5 h-5"></i>
+        </button>
+
+
+        <!-- THEME SWITCHER BUTTON (Sun / Moon) -->
+        <button 
+          id="theme-toggle-btn" 
+          onclick="TastyApp.toggleTheme()" 
+          class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-stone-200/70 dark:border-white/15 bg-white dark:bg-stone-800/80 hover:bg-stone-100 dark:hover:bg-stone-700 text-ink-700 dark:text-amber-300 flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-2xs shrink-0"
+          title="Toggle Light / Dark Mode"
+          aria-label="Toggle Theme"
+        >
+          <i data-lucide="sun" id="theme-icon-sun" class="w-4 h-4 hidden dark:inline"></i>
+          <i data-lucide="moon" id="theme-icon-moon" class="w-4 h-4 inline dark:hidden text-ink-800"></i>
+        </button>
+
+        <!-- Submit Recipe CTA -->
+        <button onclick="TastyApp.navigateTo('add-recipe')" class="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-700 hover:bg-emerald-800 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-semibold shadow-clean-sm transition-all hover:scale-102 active:scale-98 shrink-0">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span>Add Recipe</span>
+        </button>
+
+        <!-- Profile Avatar & Dropdown -->
+        <div id="user-header-profile" class="relative shrink-0">
+          <button id="user-profile-header-btn" onclick="TastyApp.toggleUserMenu()" class="flex items-center gap-2 px-2.5 py-1.5 rounded-full border border-stone-200/70 dark:border-white/15 bg-white dark:bg-stone-800 hover:border-emerald-500/50 dark:hover:border-emerald-500/50 transition-all shadow-clean-sm shrink-0" aria-label="User Account Menu">
+            <img id="header-user-avatar" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Avatar" class="w-6 h-6 rounded-full object-cover shrink-0" />
+            <span id="header-user-name" class="hidden sm:inline text-xs font-bold text-ink-800 dark:text-zinc-200 pr-0.5">Elena</span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-ink-400 dark:text-zinc-400 hidden sm:inline"></i>
+          </button>
+
+          <!-- User Menu Dropdown -->
+          <div id="user-menu-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white dark:bg-[#161B18] rounded-2xl shadow-clean-xl border border-stone-200/80 dark:border-white/10 py-2 z-50">
+            <div class="px-4 py-3 border-b border-stone-100 dark:border-white/5">
+              <p class="text-[10px] uppercase font-bold text-ink-400 dark:text-zinc-400 tracking-wider">Signed in as</p>
+              <p id="dropdown-user-email" class="text-xs font-bold text-ink-900 dark:text-zinc-100 truncate">elena.rostova@tastynest.food</p>
+            </div>
+            
+            <button onclick="TastyApp.navigateTo('profile'); TastyApp.closeUserMenu();" class="w-full text-left px-4 py-2.5 text-xs font-medium text-ink-700 dark:text-zinc-300 hover:bg-stone-50 dark:hover:bg-white/5 flex items-center gap-2.5">
+              <i data-lucide="user" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+              <span>My Profile & Preferences</span>
+            </button>
+            <button onclick="TastyApp.navigateTo('videos'); TastyApp.closeUserMenu();" class="w-full text-left px-4 py-2.5 text-xs font-medium text-ink-700 dark:text-zinc-300 hover:bg-stone-50 dark:hover:bg-white/5 flex items-center gap-2.5">
+              <i data-lucide="play-circle" class="w-4 h-4 text-rose-500"></i>
+              <span>Recipe Video Masterclasses</span>
+            </button>
+            <button onclick="TastyApp.navigateTo('favorites'); TastyApp.closeUserMenu();" class="w-full text-left px-4 py-2.5 text-xs font-medium text-ink-700 dark:text-zinc-300 hover:bg-stone-50 dark:hover:bg-white/5 flex items-center gap-2.5">
+              <i data-lucide="bookmark" class="w-4 h-4 text-citrus-500"></i>
+              <span>Saved Favorites</span>
+            </button>
+            <button onclick="TastyApp.navigateTo('planner'); TastyApp.closeUserMenu();" class="w-full text-left px-4 py-2.5 text-xs font-medium text-ink-700 dark:text-zinc-300 hover:bg-stone-50 dark:hover:bg-white/5 flex items-center gap-2.5">
+              <i data-lucide="calendar" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+              <span>Weekly Meal Plan</span>
+            </button>
+            <button onclick="TastyApp.navigateTo('shopping'); TastyApp.closeUserMenu();" class="w-full text-left px-4 py-2.5 text-xs font-medium text-ink-700 dark:text-zinc-300 hover:bg-stone-50 dark:hover:bg-white/5 flex items-center gap-2.5">
+              <i data-lucide="shopping-bag" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+              <span>Grocery Shopping List</span>
+            </button>
+            <button onclick="TastyApp.navigateTo('add-recipe'); TastyApp.closeUserMenu();" class="w-full text-left px-4 py-2.5 text-xs font-medium text-ink-700 dark:text-zinc-300 hover:bg-stone-50 dark:hover:bg-white/5 flex items-center gap-2.5">
+              <i data-lucide="plus-circle" class="w-4 h-4 text-ink-400 dark:text-zinc-400"></i>
+              <span>Submit a Recipe</span>
+            </button>
+            
+            <div class="border-t border-stone-100 dark:border-white/5 my-1"></div>
+            
+            <button onclick="TastyApp.toggleTheme(); TastyApp.closeUserMenu();" class="w-full text-left px-4 py-2.5 text-xs font-medium text-ink-700 dark:text-zinc-300 hover:bg-stone-50 dark:hover:bg-white/5 flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <i data-lucide="sun-moon" class="w-4 h-4 text-amber-500"></i>
+                <span>Switch Theme Mode</span>
+              </div>
+              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-stone-100 dark:bg-white/10" id="user-menu-theme-label">Light</span>
+            </button>
+
+            <div class="border-t border-stone-100 dark:border-white/5 my-1"></div>
+            
+            <button onclick="TastyApp.handleAuthSignOut(); TastyApp.closeUserMenu();" class="w-full text-left px-4 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 flex items-center gap-2.5">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+              <span>Sign Out</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile Drawer Hamburger -->
+        <button onclick="TastyApp.toggleMobileDrawer()" class="lg:hidden p-2 rounded-xl text-ink-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/10" aria-label="Toggle navigation">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE SIDE DRAWER -->
+  <div id="mobile-drawer" class="fixed inset-0 z-50 transform -translate-x-full transition-transform duration-300 lg:hidden flex">
+    <div onclick="TastyApp.toggleMobileDrawer()" class="fixed inset-0 bg-black/50 backdrop-blur-xs"></div>
+    <div class="relative w-4/5 max-w-sm bg-white dark:bg-[#141816] h-full shadow-2xl p-6 flex flex-col justify-between overflow-y-auto border-r border-stone-200/80 dark:border-white/10">
+      <div>
+        <div class="flex items-center justify-between pb-4 border-b border-stone-100 dark:border-white/10">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-ink-900 dark:bg-emerald-600 text-white flex items-center justify-center font-bold">
+              <i data-lucide="utensils-crossed" class="w-4 h-4 text-emerald-300 dark:text-white"></i>
+            </div>
+            <span class="font-editorial text-2xl font-bold text-ink-900 dark:text-white">TastyNest</span>
+          </div>
+          <button onclick="TastyApp.toggleMobileDrawer()" class="p-2 rounded-lg text-ink-400 dark:text-zinc-400 hover:bg-stone-100 dark:hover:bg-white/10">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- User Profile Card in Drawer -->
+        <div onclick="TastyApp.navigateTo('profile'); TastyApp.toggleMobileDrawer();" class="mt-4 p-3 rounded-2xl bg-stone-50 dark:bg-white/5 border border-stone-200/60 dark:border-white/10 flex items-center gap-3 cursor-pointer hover:border-emerald-500/50 transition-all">
+          <img id="drawer-user-avatar" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Avatar" class="w-10 h-10 rounded-xl object-cover shrink-0" />
+          <div class="min-w-0 flex-1">
+            <p id="drawer-user-name" class="text-xs font-bold text-ink-900 dark:text-white truncate">Elena Rostova</p>
+            <p id="drawer-user-role" class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold truncate">Pro Chef · View Profile &rarr;</p>
+          </div>
+        </div>
+
+        <!-- Theme Quick Toggle for Mobile -->
+        <div class="mt-3 p-3 rounded-2xl bg-stone-50 dark:bg-white/5 border border-stone-200/60 dark:border-white/10 flex items-center justify-between">
+          <span class="text-xs font-semibold text-ink-700 dark:text-zinc-300 flex items-center gap-2">
+            <i data-lucide="sun-moon" class="w-4 h-4 text-amber-500"></i>
+            <span>Appearance</span>
+          </span>
+          <button onclick="TastyApp.toggleTheme()" class="px-3 py-1 rounded-full bg-white dark:bg-stone-800 text-xs font-bold text-ink-800 dark:text-zinc-200 shadow-2xs border border-stone-200 dark:border-white/10">
+            Toggle Mode
+          </button>
+        </div>
+
+        <nav class="mt-4 flex flex-col gap-1 text-sm font-semibold text-ink-700 dark:text-zinc-300">
+          <button id="mobile-drawer-home" onclick="TastyApp.navigateTo('home'); TastyApp.toggleMobileDrawer();" class="text-left px-4 py-3 rounded-xl hover:bg-stone-100 dark:hover:bg-white/10 flex items-center gap-3 transition-colors">
+            <i data-lucide="compass" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+            <span>Home</span>
+          </button>
+          <button id="mobile-drawer-explore" onclick="TastyApp.navigateTo('explore'); TastyApp.toggleMobileDrawer();" class="text-left px-4 py-3 rounded-xl hover:bg-stone-100 dark:hover:bg-white/10 flex items-center gap-3 transition-colors">
+            <i data-lucide="layout-grid" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+            <span>Explore Recipes</span>
+          </button>
+          <button id="mobile-drawer-videos" onclick="TastyApp.navigateTo('videos'); TastyApp.toggleMobileDrawer();" class="text-left px-4 py-3 rounded-xl hover:bg-stone-100 dark:hover:bg-white/10 flex items-center justify-between transition-colors">
+            <div class="flex items-center gap-3">
+              <i data-lucide="play-circle" class="w-4 h-4 text-rose-500"></i>
+              <span>Video Masterclasses</span>
+            </div>
+            <span class="px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 text-[10px] font-extrabold">NEW</span>
+          </button>
+          <button id="mobile-drawer-categories" onclick="TastyApp.navigateTo('categories'); TastyApp.toggleMobileDrawer();" class="text-left px-4 py-3 rounded-xl hover:bg-stone-100 dark:hover:bg-white/10 flex items-center gap-3 transition-colors">
+            <i data-lucide="tag" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+            <span>Categories</span>
+          </button>
+          <button id="mobile-drawer-planner" onclick="TastyApp.navigateTo('planner'); TastyApp.toggleMobileDrawer();" class="text-left px-4 py-3 rounded-xl hover:bg-stone-100 dark:hover:bg-white/10 flex items-center gap-3 transition-colors">
+            <i data-lucide="calendar" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+            <span>Meal Planner</span>
+          </button>
+          <button id="mobile-drawer-favorites" onclick="TastyApp.navigateTo('favorites'); TastyApp.toggleMobileDrawer();" class="text-left px-4 py-3 rounded-xl hover:bg-stone-100 dark:hover:bg-white/10 flex items-center gap-3 transition-colors">
+            <i data-lucide="heart" class="w-4 h-4 text-citrus-500"></i>
+            <span>Favorites Vault</span>
+          </button>
+          <button id="mobile-drawer-shopping" onclick="TastyApp.navigateTo('shopping'); TastyApp.toggleMobileDrawer();" class="text-left px-4 py-3 rounded-xl hover:bg-stone-100 dark:hover:bg-white/10 flex items-center gap-3 transition-colors">
+            <i data-lucide="shopping-bag" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+            <span>Grocery Shopping List</span>
+          </button>
+          <button id="mobile-drawer-add-recipe" onclick="TastyApp.navigateTo('add-recipe'); TastyApp.toggleMobileDrawer();" class="text-left px-4 py-3 rounded-xl hover:bg-stone-100 dark:hover:bg-white/10 flex items-center gap-3 transition-colors">
+            <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+            <span>Publish Recipe</span>
+          </button>
+          <button id="mobile-drawer-profile" onclick="TastyApp.navigateTo('profile'); TastyApp.toggleMobileDrawer();" class="text-left px-4 py-3 rounded-xl hover:bg-stone-100 dark:hover:bg-white/10 flex items-center gap-3 transition-colors">
+            <i data-lucide="user" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+            <span>My Profile & Preferences</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="pt-6 border-t border-stone-100 dark:border-white/10">
+        <button onclick="TastyApp.openAuthModal(); TastyApp.toggleMobileDrawer();" class="w-full py-3 px-4 rounded-xl bg-ink-900 dark:bg-emerald-600 hover:bg-black text-white font-semibold text-center text-xs shadow-sm">
+          Sign In or Register
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP ROUTER VIEW -->
+  <main id="app-root" class="flex-1 w-full" role="main">
+    <!-- Dynamically populated by app.js router -->
+  </main>
+
+  <!-- CLEAN MODERN FOOTER -->
+  <footer class="bg-white dark:bg-[#121614] border-t border-stone-200/70 dark:border-white/10 mt-20 pt-16 pb-12 no-print text-ink-600 dark:text-zinc-400 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-stone-100 dark:border-white/10">
+        
+        <!-- Brand Info -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-xl bg-ink-900 dark:bg-emerald-600 text-white flex items-center justify-center font-bold">
+              <i data-lucide="utensils-crossed" class="w-4 h-4 text-emerald-300 dark:text-white"></i>
+            </div>
+            <span class="font-editorial text-2xl font-semibold text-ink-900 dark:text-white">TastyNest</span>
+          </div>
+          <p class="text-xs text-ink-500 dark:text-zinc-400 leading-relaxed max-w-sm">
+            A modern culinary design studio for home chefs and passionate cooks. Discover chef-crafted recipes, HD video masterclasses, dynamic serving scalers, and seamless weekly meal planning.
+          </p>
+          <div class="flex items-center gap-2.5 pt-1 text-ink-400 dark:text-zinc-500">
+            <a href="#" class="w-8 h-8 rounded-full border border-stone-200 dark:border-white/10 flex items-center justify-center hover:text-ink-900 dark:hover:text-white hover:border-stone-400 transition-colors"><i data-lucide="instagram" class="w-3.5 h-3.5"></i></a>
+            <a href="#" class="w-8 h-8 rounded-full border border-stone-200 dark:border-white/10 flex items-center justify-center hover:text-ink-900 dark:hover:text-white hover:border-stone-400 transition-colors"><i data-lucide="youtube" class="w-3.5 h-3.5"></i></a>
+            <a href="#" class="w-8 h-8 rounded-full border border-stone-200 dark:border-white/10 flex items-center justify-center hover:text-ink-900 dark:hover:text-white hover:border-stone-400 transition-colors"><i data-lucide="twitter" class="w-3.5 h-3.5"></i></a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-ink-900 dark:text-zinc-200 mb-3.5">Cuisines</h4>
+          <ul class="space-y-2 text-xs">
+            <li><button onclick="TastyApp.navigateTo('explore', { category: 'Italian' })" class="hover:text-ink-900 dark:hover:text-white transition-colors">Italian Handcrafted</button></li>
+            <li><button onclick="TastyApp.navigateTo('explore', { category: 'Indian' })" class="hover:text-ink-900 dark:hover:text-white transition-colors">Indian Royal Curries</button></li>
+            <li><button onclick="TastyApp.navigateTo('explore', { category: 'Chinese' })" class="hover:text-ink-900 dark:hover:text-white transition-colors">Chinese Wok & Dim Sum</button></li>
+            <li><button onclick="TastyApp.navigateTo('explore', { category: 'Desserts' })" class="hover:text-ink-900 dark:hover:text-white transition-colors">Artisan Desserts</button></li>
+            <li><button onclick="TastyApp.navigateTo('explore', { category: 'Healthy Meals' })" class="hover:text-ink-900 dark:hover:text-white transition-colors">Clean & High-Protein</button></li>
+          </ul>
+        </div>
+
+        <!-- Tools -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-ink-900 dark:text-zinc-200 mb-3.5">Kitchen Studio</h4>
+          <ul class="space-y-2 text-xs">
+            <li><button onclick="TastyApp.navigateTo('videos')" class="text-rose-500 font-bold hover:underline flex items-center gap-1"><i data-lucide="play" class="w-3 h-3 fill-rose-500"></i> Video Masterclasses</button></li>
+            <li><button onclick="TastyApp.navigateTo('planner')" class="hover:text-ink-900 dark:hover:text-white transition-colors">Weekly Meal Calendar</button></li>
+            <li><button onclick="TastyApp.navigateTo('shopping')" class="hover:text-ink-900 dark:hover:text-white transition-colors">Aisle Grocery List</button></li>
+            <li><button onclick="TastyApp.navigateTo('favorites')" class="hover:text-ink-900 dark:hover:text-white transition-colors">Saved Recipe Vault</button></li>
+            <li><button onclick="TastyApp.navigateTo('add-recipe')" class="hover:text-ink-900 dark:hover:text-white transition-colors">Publish a Recipe</button></li>
+          </ul>
+        </div>
+
+        <!-- Newsletter Column -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-ink-900 dark:text-zinc-200 mb-2">Weekly Dispatch</h4>
+          <p class="text-[11px] text-ink-500 dark:text-zinc-400 mb-3">
+            Curated recipes, seasonal chef secrets, and zero clutter. Every Sunday.
+          </p>
+          <form onsubmit="TastyApp.handleNewsletter(event)" class="space-y-2">
+            <input type="email" required placeholder="your.name@kitchen.com" class="w-full px-3.5 py-2 rounded-xl bg-stone-50 dark:bg-white/5 border border-stone-200 dark:border-white/10 text-xs text-ink-900 dark:text-zinc-100 placeholder-ink-400 focus:outline-none focus:ring-1 focus:ring-emerald-600" />
+            <button type="submit" class="w-full py-2 px-3 rounded-xl bg-ink-900 hover:bg-black dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-semibold transition-colors">
+              Subscribe Free
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-ink-400 dark:text-zinc-500">
+        <p>&copy; 2026 TastyNest Studio. Clean, modern culinary companion with Dark & Light theme.</p>
+        <div class="flex items-center gap-4">
+          <a href="#" class="hover:underline">Privacy Policy</a>
+          <a href="#" class="hover:underline">Terms of Service</a>
+          <a href="#" class="hover:underline">Contact Studio</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MOBILE BOTTOM STICKY BAR -->
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#121614]/95 backdrop-blur-md border-t border-stone-200/70 dark:border-white/10 px-4 py-2 flex items-center justify-around text-[10px] font-semibold text-ink-600 dark:text-zinc-400 no-print">
+    <button onclick="TastyApp.navigateTo('home')" class="flex flex-col items-center gap-1 p-1 hover:text-emerald-700 dark:hover:text-emerald-400">
+      <i data-lucide="compass" class="w-5 h-5"></i>
+      <span>Home</span>
+    </button>
+    <button onclick="TastyApp.navigateTo('explore')" class="flex flex-col items-center gap-1 p-1 hover:text-emerald-700 dark:hover:text-emerald-400">
+      <i data-lucide="layout-grid" class="w-5 h-5"></i>
+      <span>Explore</span>
+    </button>
+    <button onclick="TastyApp.navigateTo('videos')" class="flex flex-col items-center gap-1 p-1 text-rose-500 font-bold">
+      <i data-lucide="play-circle" class="w-5 h-5"></i>
+      <span>Videos</span>
+    </button>
+    <button onclick="TastyApp.navigateTo('planner')" class="flex flex-col items-center gap-1 p-1 hover:text-emerald-700 dark:hover:text-emerald-400">
+      <i data-lucide="calendar" class="w-5 h-5"></i>
+      <span>Planner</span>
+    </button>
+    <button onclick="TastyApp.navigateTo('favorites')" class="flex flex-col items-center gap-1 p-1 hover:text-emerald-700 dark:hover:text-emerald-400">
+      <i data-lucide="heart" class="w-5 h-5 text-citrus-500"></i>
+      <span>Saved</span>
+    </button>
+    <button onclick="TastyApp.navigateTo('shopping')" class="flex flex-col items-center gap-1 p-1 hover:text-emerald-700 dark:hover:text-emerald-400">
+      <i data-lucide="shopping-bag" class="w-5 h-5 text-emerald-600"></i>
+      <span>Grocery</span>
+    </button>
+  </div>
+
+  <!-- FLOATING ACTIVE COOKING TIMER -->
+  <div id="floating-timer-bar" class="hidden fixed bottom-20 lg:bottom-6 right-6 z-40 bg-ink-900 text-white p-3 px-4 rounded-2xl shadow-clean-xl border border-ink-800 flex items-center gap-3 timer-pulse">
+    <div class="flex items-center gap-2.5">
+      <i data-lucide="timer" class="w-5 h-5 text-citrus-400 animate-spin" style="animation-duration: 4s;"></i>
+      <div>
+        <p class="text-[9px] uppercase font-bold text-ink-400 tracking-wider">Cooking Timer</p>
+        <p id="floating-timer-digits" class="font-mono text-sm font-bold text-white">00:00</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-1 pl-2 border-l border-ink-700">
+      <button onclick="TastyApp.pauseResumeTimer()" id="floating-timer-pause-btn" class="p-1 rounded-lg bg-ink-800 hover:bg-ink-700 text-white" title="Pause / Resume">
+        <i data-lucide="pause" class="w-3.5 h-3.5"></i>
+      </button>
+      <button onclick="TastyApp.cancelCookingTimer()" class="p-1 rounded-lg bg-ink-800 hover:bg-rose-900 text-rose-300" title="Reset">
+        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- RECIPE VIDEO THEATER MODAL -->
+  <div id="recipe-video-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-6">
+    <div onclick="TastyApp.closeVideoModal()" class="fixed inset-0 bg-black/85 backdrop-blur-md transition-opacity"></div>
+    <div class="relative w-full max-w-4xl bg-stone-900 rounded-3xl shadow-2xl overflow-hidden border border-white/10 z-10 flex flex-col max-h-[92vh]">
+      
+      <!-- Video Header -->
+      <div class="px-4 sm:px-6 py-3.5 bg-black/85 border-b border-white/10 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5 overflow-hidden">
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shrink-0"></span>
+          <span class="text-xs font-bold text-rose-400 uppercase tracking-wider shrink-0">Masterclass</span>
+          <span class="text-white/30 shrink-0">·</span>
+          <h3 id="video-modal-title" class="text-xs sm:text-sm font-semibold text-white truncate max-w-xs sm:max-w-md">Recipe Video</h3>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- Stream Mode Toggle -->
+          <div class="inline-flex p-1 rounded-xl bg-stone-800/90 border border-white/10 text-[11px] font-semibold text-stone-300">
+            <button id="video-mode-youtube" onclick="TastyApp.switchVideoMode('youtube')" class="px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5" title="Watch Official YouTube Recipe Masterclass">
+              <i data-lucide="youtube" class="w-3.5 h-3.5 text-rose-400"></i>
+              <span>YouTube Video</span>
+            </button>
+            <button id="video-mode-local" onclick="TastyApp.switchVideoMode('local')" class="px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5" title="Watch 1080p Studio Demo">
+              <i data-lucide="film" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Studio 1080p</span>
+            </button>
+          </div>
+
+          <!-- Watch on YouTube.com External Link -->
+          <a id="video-modal-yt-link" href="#" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 hover:text-white text-xs font-semibold border border-white/15 transition-all shadow-2xs" title="Open full video on YouTube.com">
+            <i data-lucide="external-link" class="w-3.5 h-3.5 text-rose-400"></i>
+            <span>Open in YouTube ↗</span>
+          </a>
+
+          <button onclick="TastyApp.closeVideoModal()" class="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors shrink-0" aria-label="Close video player">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Video Player Frame -->
+      <div id="video-player-frame" class="relative w-full bg-black aspect-video flex items-center justify-center overflow-hidden">
+        <!-- Injected dynamically with responsive YouTube iframe or video player -->
+      </div>
+
+      <!-- Video Chapters & Step Timeline -->
+      <div class="p-3.5 sm:p-4 bg-stone-900/95 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 overflow-x-auto">
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 w-full sm:w-auto" id="video-step-markers">
+          <!-- Populated dynamically with chapter buttons -->
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end">
+          <!-- Speed Pills -->
+          <div class="flex items-center gap-1 bg-white/5 rounded-xl p-1 border border-white/10 text-[10px] font-bold text-stone-300">
+            <span class="px-1 text-stone-400">Speed:</span>
+            <button onclick="TastyApp.setVideoSpeed(0.75)" class="video-spd-btn px-1.5 py-0.5 rounded-md hover:bg-white/10" data-speed="0.75">0.75x</button>
+            <button onclick="TastyApp.setVideoSpeed(1)" class="video-spd-btn px-1.5 py-0.5 rounded-md bg-white/20 text-white font-bold" data-speed="1">1x</button>
+            <button onclick="TastyApp.setVideoSpeed(1.25)" class="video-spd-btn px-1.5 py-0.5 rounded-md hover:bg-white/10" data-speed="1.25">1.25x</button>
+            <button onclick="TastyApp.setVideoSpeed(1.5)" class="video-spd-btn px-1.5 py-0.5 rounded-md hover:bg-white/10" data-speed="1.5">1.5x</button>
+          </div>
+
+          <button id="video-view-recipe-btn" onclick="" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all">
+            <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+            <span>View Recipe</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SEARCH MODAL OVERLAY -->
+  <div id="search-modal" class="fixed inset-0 z-50 hidden flex items-start justify-center pt-16 sm:pt-24 px-4">
+    <div onclick="TastyApp.closeSearchModal()" class="fixed inset-0 bg-ink-950/60 backdrop-blur-xs"></div>
+    <div class="relative w-full max-w-2xl bg-white dark:bg-[#161B18] rounded-3xl shadow-clean-xl border border-stone-200/80 dark:border-white/10 overflow-hidden">
+      <div class="p-4 sm:p-5 border-b border-stone-100 dark:border-white/5 flex items-center gap-3">
+        <i data-lucide="search" class="w-5 h-5 text-ink-400 dark:text-zinc-400"></i>
+        <input type="text" id="global-search-input" oninput="TastyApp.handleSearchType(this.value)" placeholder="Search recipes by name, ingredient, cuisine..." class="flex-1 bg-transparent text-ink-900 dark:text-zinc-100 placeholder-ink-400 dark:placeholder-zinc-500 text-sm sm:text-base focus:outline-none" autofocus />
+        <button onclick="TastyApp.closeSearchModal()" class="p-1.5 rounded-xl text-ink-400 hover:text-ink-700 dark:text-zinc-400 dark:hover:text-zinc-200">
+          <kbd class="text-xs bg-stone-100 dark:bg-white/10 px-2 py-1 rounded font-mono">ESC</kbd>
+        </button>
+      </div>
+
+      <div class="px-5 py-2.5 bg-stone-50 dark:bg-white/5 border-b border-stone-100 dark:border-white/5 flex items-center gap-2 overflow-x-auto text-xs">
+        <span class="text-ink-400 dark:text-zinc-400 font-medium shrink-0">Quick:</span>
+        <button onclick="TastyApp.setSearchQuery('Butter Chicken')" class="px-2.5 py-1 rounded-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-white/10 hover:border-emerald-600 text-ink-700 dark:text-zinc-300 shrink-0">Butter Chicken</button>
+        <button onclick="TastyApp.setSearchQuery('Carbonara')" class="px-2.5 py-1 rounded-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-white/10 hover:border-emerald-600 text-ink-700 dark:text-zinc-300 shrink-0">Carbonara</button>
+        <button onclick="TastyApp.setSearchQuery('Truffle')" class="px-2.5 py-1 rounded-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-white/10 hover:border-emerald-600 text-ink-700 dark:text-zinc-300 shrink-0">Truffle Risotto</button>
+        <button onclick="TastyApp.setSearchQuery('Salmon')" class="px-2.5 py-1 rounded-full bg-white dark:bg-stone-800 border border-stone-200 dark:border-white/10 hover:border-emerald-600 text-ink-700 dark:text-zinc-300 shrink-0">Tuscan Salmon</button>
+      </div>
+
+      <div id="search-modal-results" class="max-h-96 overflow-y-auto p-4 space-y-1.5">
+        <!-- Rendered by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATION MODAL -->
+  <div id="auth-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div onclick="TastyApp.closeAuthModal()" class="fixed inset-0 bg-ink-950/60 backdrop-blur-xs"></div>
+    <div class="relative w-full max-w-md bg-white dark:bg-[#161B18] rounded-3xl shadow-clean-xl border border-stone-200/80 dark:border-white/10 p-6 sm:p-8">
+      <button onclick="TastyApp.closeAuthModal()" class="absolute top-5 right-5 p-1.5 rounded-xl text-ink-400 hover:text-ink-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/10">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="text-center mb-5">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 flex items-center justify-center mx-auto mb-2.5 border border-emerald-100 dark:border-emerald-800/40">
+          <i data-lucide="cloud" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></i>
+        </div>
+        <h3 id="auth-modal-title" class="font-editorial text-3xl font-semibold text-ink-900 dark:text-white">Cloud Kitchen Account</h3>
+        <p id="auth-modal-subtitle" class="text-xs text-ink-500 dark:text-zinc-400 mt-1">Sign in with Firebase to sync your meal plan and grocery list.</p>
+      </div>
+
+      <!-- Real-time Auth Error Alert -->
+      <div id="auth-error-alert" class="hidden p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-300 mb-4 flex items-start gap-2">
+        <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 mt-0.5"></i>
+        <span id="auth-error-text">Authentication message</span>
+      </div>
+
+      <div class="flex p-1 rounded-xl bg-stone-100 dark:bg-white/10 mb-5 text-xs font-semibold">
+        <button id="auth-tab-login" onclick="TastyApp.switchAuthTab('login')" class="flex-1 py-1.5 rounded-lg bg-white dark:bg-stone-800 shadow-2xs text-ink-900 dark:text-white transition-all">Sign In</button>
+        <button id="auth-tab-register" onclick="TastyApp.switchAuthTab('register')" class="flex-1 py-1.5 rounded-lg text-ink-500 dark:text-zinc-400 hover:text-ink-900 dark:hover:text-white transition-all">Create Account</button>
+      </div>
+
+      <form onsubmit="TastyApp.handleAuthSubmit(event)" class="space-y-3.5">
+        <div id="auth-name-group" class="hidden">
+          <label class="block text-xs font-semibold text-ink-700 dark:text-zinc-300 mb-1">Full Name</label>
+          <input type="text" id="auth-input-name" placeholder="Chef Elena" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 dark:border-white/15 bg-transparent text-xs text-ink-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-emerald-600" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-ink-700 dark:text-zinc-300 mb-1">Email Address</label>
+          <input type="email" id="auth-input-email" required placeholder="chef@tastynest.food" value="chef@tastynest.food" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 dark:border-white/15 bg-transparent text-xs text-ink-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-emerald-600" />
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold text-ink-700 dark:text-zinc-300">Password</label>
+            <button type="button" onclick="TastyApp.handlePasswordReset()" class="text-[11px] text-emerald-700 dark:text-emerald-400 hover:underline">Forgot Password?</button>
+          </div>
+          <input type="password" id="auth-input-password" required value="Gourmet2026!" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 dark:border-white/15 bg-transparent text-xs text-ink-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-emerald-600" />
+        </div>
+
+        <button type="submit" id="auth-submit-btn" class="w-full py-2.5 rounded-xl bg-ink-900 dark:bg-emerald-600 hover:bg-black dark:hover:bg-emerald-500 text-white font-semibold text-xs shadow-sm transition-all flex items-center justify-center gap-2">
+          <span>Sign In</span>
+        </button>
+      </form>
+
+      <div class="relative my-5 text-center">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-stone-200/80 dark:border-white/10"></div></div>
+        <span class="relative bg-white dark:bg-[#161B18] px-3 text-[10px] text-ink-400 dark:text-zinc-400 uppercase tracking-wider">Or</span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5">
+        <button onclick="TastyApp.handleSocialLogin('Google')" class="py-2 px-3 rounded-xl border border-stone-200 dark:border-white/15 hover:bg-stone-50 dark:hover:bg-white/5 text-xs font-medium text-ink-700 dark:text-zinc-300 flex items-center justify-center gap-2">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.4l3.7 2.9C6.5 7.4 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.7c-.2-.7-.4-1.5-.4-2.4s.2-1.7.4-2.4L1.9 7C.7 9.4 0 12 0 14.7s.7 5.3 1.9 7.7l3.7-2.9z"/><path fill="#34A853" d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.4L1.9 16.3C3.7 20.1 7.5 23.5 12 23.5z"/></svg>
+          <span>Google</span>
+        </button>
+        <button onclick="TastyApp.handleQuickDemoLogin()" class="py-2 px-3 rounded-xl border border-stone-200 dark:border-white/15 hover:bg-stone-50 dark:hover:bg-white/5 text-xs font-medium text-emerald-700 dark:text-emerald-400 flex items-center justify-center gap-1.5">
+          <i data-lucide="zap" class="w-3.5 h-3.5 text-citrus-500"></i>
+          <span>1-Click Demo</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEAL PLANNER SELECTOR MODAL -->
+  <div id="meal-plan-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div onclick="TastyApp.closeMealPlanModal()" class="fixed inset-0 bg-ink-950/60 backdrop-blur-xs"></div>
+    <div class="relative w-full max-w-md bg-white dark:bg-[#161B18] rounded-3xl shadow-clean-xl border border-stone-200/80 dark:border-white/10 p-6">
+      <button onclick="TastyApp.closeMealPlanModal()" class="absolute top-4 right-4 p-1.5 rounded-xl text-ink-400 hover:text-ink-700 dark:text-zinc-400 dark:hover:text-zinc-200">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center">
+          <i data-lucide="calendar" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <h3 class="font-editorial text-2xl font-semibold text-ink-900 dark:text-white">Add to Meal Plan</h3>
+          <p id="plan-modal-recipe-title" class="text-xs text-ink-500 dark:text-zinc-400 truncate max-w-xs">Recipe Title</p>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-ink-700 dark:text-zinc-300 mb-1.5">Day of Week</label>
+          <div class="grid grid-cols-4 gap-1.5 text-xs font-semibold" id="plan-day-buttons">
+            <button onclick="TastyApp.selectPlanDay('Monday')" class="plan-day-btn p-2 rounded-xl border border-stone-200 dark:border-white/10 text-center hover:bg-stone-50 dark:hover:bg-white/5 active-day">Mon</button>
+            <button onclick="TastyApp.selectPlanDay('Tuesday')" class="plan-day-btn p-2 rounded-xl border border-stone-200 dark:border-white/10 text-center hover:bg-stone-50 dark:hover:bg-white/5">Tue</button>
+            <button onclick="TastyApp.selectPlanDay('Wednesday')" class="plan-day-btn p-2 rounded-xl border border-stone-200 dark:border-white/10 text-center hover:bg-stone-50 dark:hover:bg-white/5">Wed</button>
+            <button onclick="TastyApp.selectPlanDay('Thursday')" class="plan-day-btn p-2 rounded-xl border border-stone-200 dark:border-white/10 text-center hover:bg-stone-50 dark:hover:bg-white/5">Thu</button>
+            <button onclick="TastyApp.selectPlanDay('Friday')" class="plan-day-btn p-2 rounded-xl border border-stone-200 dark:border-white/10 text-center hover:bg-stone-50 dark:hover:bg-white/5">Fri</button>
+            <button onclick="TastyApp.selectPlanDay('Saturday')" class="plan-day-btn p-2 rounded-xl border border-stone-200 dark:border-white/10 text-center hover:bg-stone-50 dark:hover:bg-white/5">Sat</button>
+            <button onclick="TastyApp.selectPlanDay('Sunday')" class="plan-day-btn p-2 rounded-xl border border-stone-200 dark:border-white/10 text-center hover:bg-stone-50 dark:hover:bg-white/5">Sun</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-ink-700 dark:text-zinc-300 mb-1.5">Meal Slot</label>
+          <div class="grid grid-cols-4 gap-2 text-xs font-medium" id="plan-slot-buttons">
+            <button onclick="TastyApp.selectPlanSlot('Breakfast')" class="plan-slot-btn py-2 rounded-xl border border-stone-200 dark:border-white/10 text-center hover:bg-stone-50 dark:hover:bg-white/5">Breakfast</button>
+            <button onclick="TastyApp.selectPlanSlot('Lunch')" class="plan-slot-btn py-2 rounded-xl border border-stone-200 dark:border-white/10 text-center hover:bg-stone-50 dark:hover:bg-white/5">Lunch</button>
+            <button onclick="TastyApp.selectPlanSlot('Dinner')" class="plan-slot-btn py-2 rounded-xl border border-stone-200 dark:border-white/10 text-center hover:bg-stone-50 dark:hover:bg-white/5 active-slot">Dinner</button>
+            <button onclick="TastyApp.selectPlanSlot('Snack')" class="plan-slot-btn py-2 rounded-xl border border-stone-200 dark:border-white/10 text-center hover:bg-stone-50 dark:hover:bg-white/5">Snack</button>
+          </div>
+        </div>
+
+        <button onclick="TastyApp.confirmAddToPlan()" class="w-full mt-3 py-2.5 rounded-xl bg-ink-900 dark:bg-emerald-600 hover:bg-black dark:hover:bg-emerald-500 text-white font-semibold text-xs shadow-sm transition-all">
+          Schedule Dish
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISH PICKER MODAL FOR SPECIFIC MEAL PLAN SLOT -->
+  <div id="slot-dish-picker-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div onclick="TastyApp.closeSlotDishPicker()" class="fixed inset-0 bg-ink-950/75 backdrop-blur-xs"></div>
+    <div class="relative w-full max-w-2xl bg-white dark:bg-[#161B18] rounded-3xl shadow-clean-xl border border-stone-200/80 dark:border-white/10 flex flex-col max-h-[85vh] overflow-hidden">
+      <!-- Modal Header -->
+      <div class="p-5 sm:p-6 border-b border-stone-100 dark:border-white/10 flex items-center justify-between shrink-0 bg-stone-50/60 dark:bg-white/[0.02]">
+        <div class="flex items-center gap-3">
+          <div id="slot-picker-icon-wrap" class="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-100 dark:border-emerald-800/40">
+            <i data-lucide="utensils" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 id="slot-picker-title" class="font-editorial text-2xl sm:text-3xl font-semibold text-ink-900 dark:text-white">Select Dish</h3>
+            <p id="slot-picker-subtitle" class="text-xs text-ink-500 dark:text-zinc-400">Choose a culinary recipe to schedule</p>
+          </div>
+        </div>
+        <button onclick="TastyApp.closeSlotDishPicker()" class="p-2 rounded-xl text-ink-400 hover:text-ink-700 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-white/10 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Live Search & Category Chips Filter -->
+      <div class="p-4 border-b border-stone-100 dark:border-white/10 space-y-3 shrink-0 bg-white dark:bg-[#161B18]">
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400 dark:text-zinc-500"></i>
+          <input 
+            type="text" 
+            id="slot-picker-search-input" 
+            placeholder="Search by recipe name, tag, or ingredients..." 
+            oninput="TastyApp.handleSlotPickerSearch(this.value)" 
+            class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-stone-200 dark:border-white/15 bg-stone-50 dark:bg-white/5 text-xs text-ink-900 dark:text-zinc-100 placeholder-ink-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+          />
+        </div>
+
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5 text-xs" id="slot-picker-category-chips">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Recipes Grid List -->
+      <div id="slot-picker-recipes-list" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-2.5">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODERN MOBILE BOTTOM DOCK (Touch First, Thumb-Friendly) -->
+  <nav id="mobile-bottom-dock" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#121614]/95 backdrop-blur-xl border-t border-stone-200/80 dark:border-white/10 px-2 py-1.5 flex items-center justify-around shadow-clean-xl">
+    <button id="mobile-dock-home" onclick="TastyApp.navigateTo('home')" class="flex flex-col items-center justify-center gap-0.5 py-1 px-3 rounded-2xl text-ink-500 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all">
+      <i data-lucide="home" class="w-5 h-5"></i>
+      <span class="text-[10px] font-semibold">Home</span>
+    </button>
+
+    <button id="mobile-dock-explore" onclick="TastyApp.navigateTo('explore')" class="flex flex-col items-center justify-center gap-0.5 py-1 px-3 rounded-2xl text-ink-500 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all">
+      <i data-lucide="compass" class="w-5 h-5"></i>
+      <span class="text-[10px] font-semibold">Explore</span>
+    </button>
+
+    <button id="mobile-dock-videos" onclick="TastyApp.navigateTo('videos')" class="relative flex flex-col items-center justify-center gap-0.5 py-1 px-3 rounded-2xl text-ink-500 dark:text-zinc-400 hover:text-rose-500 transition-all">
+      <div class="relative">
+        <i data-lucide="play-circle" class="w-5 h-5 text-rose-500"></i>
+        <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-rose-500 video-pulse-dot"></span>
+      </div>
+      <span class="text-[10px] font-semibold">Videos</span>
+    </button>
+
+    <button id="mobile-dock-planner" onclick="TastyApp.navigateTo('planner')" class="flex flex-col items-center justify-center gap-0.5 py-1 px-3 rounded-2xl text-ink-500 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all">
+      <i data-lucide="calendar" class="w-5 h-5"></i>
+      <span class="text-[10px] font-semibold">Planner</span>
+    </button>
+
+    <button id="mobile-dock-profile" onclick="TastyApp.navigateTo('profile')" class="flex flex-col items-center justify-center gap-0.5 py-1 px-3 rounded-2xl text-ink-500 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all">
+      <i data-lucide="user" class="w-5 h-5"></i>
+      <span class="text-[10px] font-semibold">Profile</span>
+    </button>
+  </nav>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="fixed top-20 right-4 sm:right-6 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full">
+    <!-- Injected dynamically -->
+  </div>
+
+  <!-- Scripts -->
+  <script src="recipes-data.js"></script>
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      TastyApp.init();
+      if (window.lucide) lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

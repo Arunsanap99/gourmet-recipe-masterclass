@@ -1,0 +1,334 @@
+/* TastyNest - Clean & Modern Culinary Design System */
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-main: #FAFAF7;
+  --bg-card: #FFFFFF;
+  --bg-subtle: #F4F4EE;
+  --bg-elevated: #FFFFFF;
+  
+  --text-main: #141715;
+  --text-muted: #525C54;
+  --text-light: #8A978E;
+
+  --accent-emerald: #0F5132;
+  --accent-emerald-light: #EBF7EE;
+  --accent-emerald-border: #C8E8D0;
+  
+  --accent-citrus: #E8590C;
+  --accent-citrus-hover: #D9480F;
+  --accent-citrus-light: #FFF4E6;
+  
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-card: rgba(0, 0, 0, 0.08);
+
+  --shadow-subtle: 0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 1px 4px -1px rgba(0, 0, 0, 0.02);
+  --shadow-modern: 0 12px 32px -4px rgba(20, 23, 21, 0.06), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 20px 40px -8px rgba(20, 23, 21, 0.1), 0 6px 16px -2px rgba(232, 89, 12, 0.06);
+  
+  --navbar-bg: rgba(255, 255, 255, 0.85);
+  --navbar-border: rgba(0, 0, 0, 0.07);
+}
+
+/* Elegant Dark Mode Variables */
+html.dark {
+  --bg-main: #0B0E0D;
+  --bg-card: #141816;
+  --bg-subtle: #1C2320;
+  --bg-elevated: #222B26;
+  
+  --text-main: #F3F5F4;
+  --text-muted: #9EABA3;
+  --text-light: #6C7A72;
+
+  --accent-emerald: #10B981;
+  --accent-emerald-light: rgba(16, 185, 129, 0.16);
+  --accent-emerald-border: rgba(16, 185, 129, 0.32);
+  
+  --accent-citrus: #FB923C;
+  --accent-citrus-hover: #F97316;
+  --accent-citrus-light: rgba(251, 146, 60, 0.16);
+  
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-card: rgba(255, 255, 255, 0.11);
+
+  --shadow-subtle: 0 2px 10px rgba(0, 0, 0, 0.5);
+  --shadow-modern: 0 14px 36px -4px rgba(0, 0, 0, 0.65);
+  --shadow-hover: 0 22px 45px -8px rgba(0, 0, 0, 0.85), 0 6px 20px -2px rgba(16, 185, 129, 0.12);
+  
+  --navbar-bg: rgba(18, 24, 21, 0.88);
+  --navbar-border: rgba(255, 255, 255, 0.09);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.font-editorial {
+  font-family: 'Instrument Serif', 'Playfair Display', Georgia, serif;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8D8CC;
+  border-radius: 999px;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #2D3832;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B6B6A5;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3E4D45;
+}
+
+/* Modern Card Transitions */
+.modern-card {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.25s ease,
+              background-color 0.3s ease;
+}
+.modern-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(16, 185, 129, 0.28);
+}
+
+html.dark .modern-card {
+  background-color: var(--bg-card);
+  border-color: var(--border-card);
+}
+
+/* Image Zoom */
+.card-img-wrap {
+  overflow: hidden;
+  position: relative;
+}
+.card-img-wrap img {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modern-card:hover .card-img-wrap img {
+  transform: scale(1.04);
+}
+
+/* Video badge glow pulse */
+@keyframes videoGlowPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(225, 29, 72, 0);
+  }
+}
+.video-pulse-dot {
+  animation: videoGlowPulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+/* Modern Checkbox */
+.modern-checkbox {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1.5px solid #D0D5CE;
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+  display: inline-grid;
+  place-content: center;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  background-color: #FFFFFF;
+}
+html.dark .modern-checkbox {
+  background-color: #1A211D;
+  border-color: #38453D;
+}
+.modern-checkbox:checked {
+  background-color: var(--accent-emerald) !important;
+  border-color: var(--accent-emerald) !important;
+}
+.modern-checkbox:checked::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.3rem;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(-45deg) translate(0.5px, -0.5px);
+}
+
+/* Line-through Checked item animation */
+.checked-done {
+  text-decoration: line-through;
+  opacity: 0.45;
+  transition: all 0.25s ease;
+}
+
+/* Animated Toasts */
+@keyframes modernSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.toast-enter {
+  animation: modernSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Subtle pulse */
+@keyframes timerPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(232, 89, 12, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(232, 89, 12, 0);
+  }
+}
+.timer-pulse {
+  animation: timerPulse 2s infinite;
+}
+
+/* Frosted glass utility */
+.glass-panel {
+  background: var(--navbar-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: var(--navbar-border);
+}
+
+/* Video Player Enhancements */
+.video-progress-bar::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #E11D48;
+  cursor: pointer;
+}
+
+/* Modern Active Nav Pill */
+.nav-pill-active {
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #0F5132 !important;
+  border: 1px solid rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 1px 4px rgba(16, 185, 129, 0.1);
+  font-weight: 700 !important;
+}
+html.dark .nav-pill-active {
+  background: rgba(16, 185, 129, 0.22) !important;
+  color: #34D399 !important;
+  border-color: rgba(16, 185, 129, 0.45) !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+}
+
+/* Mobile Bottom Dock Active State */
+.mobile-dock-active {
+  color: #10B981 !important;
+  font-weight: 700 !important;
+  transform: translateY(-2px);
+  position: relative;
+}
+.mobile-dock-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 3px;
+  background-color: #10B981;
+  border-radius: 999px;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+}
+
+/* Print styling */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  header, footer, nav, button, .no-print {
+    display: none !important;
+  }
+}
+
+/* Custom Modern Gourmet Checkbox */
+.modern-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 0.45rem;
+  border: 1.5px solid rgba(0, 0, 0, 0.22);
+  background-color: transparent;
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+  margin: 0;
+}
+
+html.dark .modern-checkbox {
+  border-color: rgba(255, 255, 255, 0.25);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.modern-checkbox:hover {
+  border-color: #0F5132;
+  transform: scale(1.08);
+}
+
+html.dark .modern-checkbox:hover {
+  border-color: #10B981;
+}
+
+.modern-checkbox:checked {
+  background-color: #0F5132;
+  border-color: #0F5132;
+}
+
+html.dark .modern-checkbox:checked {
+  background-color: #10B981;
+  border-color: #10B981;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.35);
+}
+
+.modern-checkbox:checked::before {
+  content: "";
+  width: 0.35rem;
+  height: 0.65rem;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.checked-done {
+  text-decoration: line-through;
+  opacity: 0.45;
+  transition: opacity 0.2s ease, text-decoration 0.2s ease;
+}
+
