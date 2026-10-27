@@ -32,7 +32,7 @@ const INITIAL_RECIPES = [
     "hasVideo": true,
     "youtubeId": "1JYV4dKe5hg",
     "youtubeWatchUrl": "https://www.youtube.com/watch?v=1JYV4dKe5hg",
-    "videoUrl": "videos/cooking-demo.mp4",
+    "videoUrl": "https://www.youtube-nocookie.com/embed/1JYV4dKe5hg",
     "videoDuration": "12:45",
     "videoChapters": [
       {
