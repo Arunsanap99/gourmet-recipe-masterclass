@@ -20,6 +20,14 @@
 
 ---
 
+## 📸 Preview
+
+<p align="center">
+  <img src="screenshot.png" alt="TastyNest — Gourmet Recipe Masterclass Studio" width="100%" />
+</p>
+
+---
+
 ## 📖 About
 
 **TastyNest** is a modern, responsive culinary web application featuring **20+ authentic chef-crafted recipes**, integrated **YouTube video masterclasses**, dynamic ingredient scaling, automated cooking timers, interactive weekly meal planning, and aisle-categorized grocery checklists — all wrapped in a premium, dark-mode-ready design.
